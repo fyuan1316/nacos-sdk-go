@@ -127,6 +127,15 @@ func main() {
 		Clusters:    []string{"cluster-a"},
 	})
 
+	// query namespaces
+	ExampleServiceClient_GetNamespaces(client)
+
+	ExampleServiceClient_GetAllService(client, vo.GetAllServiceInfoParam{
+		NameSpace: "",
+		PageNo:    1,
+		PageSize:  10,
+	})
+
 	//Subscribe key=serviceName+groupName+cluster
 	//Note:We call add multiple SubscribeCallback with the same key.
 	param := &vo.SubscribeParam{

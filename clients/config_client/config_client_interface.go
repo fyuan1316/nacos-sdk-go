@@ -24,6 +24,10 @@ import (
 //go:generate mockgen -destination ../../mock/mock_config_client_interface.go -package mock -source=./config_client_interface.go
 
 type IConfigClient interface {
+
+	// ListConfig()
+	//ListConfig(param vo.ConfigParam) (string, error)
+
 	// GetConfig use to get config from nacos server
 	// dataId  require
 	// group   require

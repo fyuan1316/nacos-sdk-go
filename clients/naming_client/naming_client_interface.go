@@ -107,4 +107,7 @@ type INamingClient interface {
 
 	//CloseClient close the GRPC client
 	CloseClient()
+
+	// GetNamespaces query all namespaces
+	GetNamespaces() ([]model.Namespace, error)
 }

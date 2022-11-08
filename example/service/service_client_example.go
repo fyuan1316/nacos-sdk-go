@@ -95,3 +95,11 @@ func ExampleServiceClient_GetAllService(client naming_client.INamingClient, para
 	}
 	fmt.Printf("GetAllService,param:%+v, result:%+v \n\n", param, service)
 }
+
+func ExampleServiceClient_GetNamespaces(client naming_client.INamingClient) {
+	ns, err := client.GetNamespaces()
+	if err != nil {
+		panic("GetNamespaces failed!")
+	}
+	fmt.Printf("GetNamespaces, result:%+v \n\n", ns)
+}

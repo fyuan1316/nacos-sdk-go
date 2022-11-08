@@ -37,4 +37,6 @@ type INamingProxy interface {
 	Unsubscribe(serviceName, groupName, clusters string) error
 
 	CloseClient()
+
+	GetNamespaces() ([]model.Namespace, error)
 }

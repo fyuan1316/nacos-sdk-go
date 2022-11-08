@@ -18,6 +18,7 @@ package naming_http
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -212,4 +213,25 @@ func (proxy *NamingHttpProxy) Unsubscribe(serviceName, groupName, clusters strin
 
 func (proxy *NamingHttpProxy) CloseClient() {
 
+}
+
+func (proxy *NamingHttpProxy) GetNamespaces() ([]model.Namespace, error) {
+	var namespaceList []model.Namespace
+	api := constant.NAMESPACE_PATH
+	result, err := proxy.nacosServer.ReqApi(api, map[string]string{}, http.MethodGet)
+	if err != nil || result == "" {
+		logger.Errorf("GetNamespaces failed!,result:%s error:%+v", result, err)
+		return namespaceList, err
+	}
+
+	data, _, _, err := jsonparser.Get([]byte(result), "data")
+
+	if err != nil {
+		return namespaceList, err
+	}
+	err = json.Unmarshal(data, &namespaceList)
+	if err != nil {
+		return namespaceList, err
+	}
+	return namespaceList, nil
 }

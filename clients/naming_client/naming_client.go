@@ -315,3 +315,7 @@ func (sc *NamingClient) CloseClient() {
 	sc.serviceProxy.CloseClient()
 	sc.cancel()
 }
+
+func (sc *NamingClient) GetNamespaces() ([]model.Namespace, error) {
+	return sc.serviceProxy.GetNamespaces()
+}

@@ -184,3 +184,7 @@ func (proxy *NamingGrpcProxy) Unsubscribe(serviceName, groupName, clusters strin
 func (proxy *NamingGrpcProxy) CloseClient() {
 	proxy.rpcClient.GetRpcClient().Shutdown()
 }
+
+func (proxy *NamingGrpcProxy) GetNamespaces() ([]model.Namespace, error) {
+	return nil, nil
+}
