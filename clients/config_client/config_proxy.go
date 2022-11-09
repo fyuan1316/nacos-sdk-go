@@ -44,13 +44,16 @@ import (
 type ConfigProxy struct {
 	nacosServer  *nacos_server.NacosServer
 	clientConfig constant.ClientConfig
+	// hold openapi client
+	IConfigOpenApi
 }
 
-func NewConfigProxy(ctx context.Context, serverConfig []constant.ServerConfig, clientConfig constant.ClientConfig, httpAgent http_agent.IHttpAgent) (IConfigProxy, error) {
+func NewConfigProxy(ctx context.Context, serverConfig []constant.ServerConfig, clientConfig constant.ClientConfig, httpAgent http_agent.IHttpAgent, ConfigClient *ConfigClient) (IConfigProxy, error) {
 	proxy := ConfigProxy{}
 	var err error
 	proxy.nacosServer, err = nacos_server.NewNacosServer(ctx, serverConfig, clientConfig, httpAgent, clientConfig.TimeoutMs, clientConfig.Endpoint)
 	proxy.clientConfig = clientConfig
+	proxy.IConfigOpenApi = &ConfigOpenApiClient{NacosServer: proxy.nacosServer, ClientConfig: &proxy.clientConfig, ConfigClient: ConfigClient}
 	return &proxy, err
 }
 

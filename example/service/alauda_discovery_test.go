@@ -16,7 +16,7 @@ var (
 	serverCfg []constant.ServerConfig
 	clientCfg *constant.ClientConfig
 	//
-
+	nsCRM = "735c14c7-cde2-4264-8e97-3add5fab061b"
 )
 
 func setup() {
@@ -72,22 +72,32 @@ func Test_GetNamespaces(t *testing.T) {
 	fmt.Printf("GetNamespaces, result:%+v \n\n", allNS)
 }
 
-func Test_GetConfig(t *testing.T) {
+func Test_ListConfig(t *testing.T) {
 	// as guest user
-	buildCC("", "g", "g")
+	buildCC(nsCRM, "g", "g")
 	// create config client
 
-	client, err := clients.CreateConfigClient(map[string]interface{}{
-		constant.KEY_CLIENT_CONFIG:  clientCfg,
+	client, err := clients.CreateComposedConfigClient(map[string]interface{}{
+		constant.KEY_CLIENT_CONFIG:  *clientCfg,
 		constant.KEY_SERVER_CONFIGS: serverCfg,
 	})
 	if err != nil {
 		panic(err)
 	}
-	allCFGInNS, err := client.GetConfig(vo.ConfigParam{})
+	allCFGInNS, err := client.ListConfig(nsCRM)
 	if err != nil {
 		panic("GetConfig failed!")
 		fmt.Println(err)
 	}
 	fmt.Printf("GetConfig, result:%+v \n\n", allCFGInNS)
+	//
+	//allCFGInNS, err := client.SearchConfig(vo.SearchConfigParam{
+	//	Search: "accurate",
+	//})
+	//if err != nil {
+	//	panic("GetConfig failed!")
+	//	fmt.Println(err)
+	//}
+	//fmt.Printf("GetConfig, result:%+v \n\n", allCFGInNS)
+
 }

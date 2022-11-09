@@ -16,4 +16,5 @@ type IConfigProxy interface {
 	requestProxy(rpcClient *rpc.RpcClient, request rpc_request.IRequest, timeoutMills uint64) (rpc_response.IResponse, error)
 	createRpcClient(ctx context.Context, taskId string, client *ConfigClient) *rpc.RpcClient
 	getRpcClient(client *ConfigClient) *rpc.RpcClient
+	IConfigOpenApi
 }

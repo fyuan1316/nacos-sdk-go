@@ -62,6 +62,11 @@ func createConfigClientTest() *ConfigClient {
 type MockConfigProxy struct {
 }
 
+func (m *MockConfigProxy) ListConfig(tenant string) (*model.ConfigPage, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
 func (m *MockConfigProxy) queryConfig(dataId, group, tenant string, timeout uint64, notify bool, client *ConfigClient) (*rpc_response.ConfigQueryResponse, error) {
 	cacheKey := util.GetConfigCacheKey(dataId, group, tenant)
 	if IsLimited(cacheKey) {

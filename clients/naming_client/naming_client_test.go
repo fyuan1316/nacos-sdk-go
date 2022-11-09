@@ -19,6 +19,7 @@ package naming_client
 import (
 	"testing"
 
+	"github.com/nacos-group/nacos-sdk-go/v2/clients/naming_client/naming_proxy"
 	"github.com/nacos-group/nacos-sdk-go/v2/common/http_agent"
 
 	"github.com/nacos-group/nacos-sdk-go/v2/clients/nacos_client"
@@ -35,6 +36,8 @@ var clientConfigTest = *constant.NewClientConfig(
 )
 
 var serverConfigTest = *constant.NewServerConfig("127.0.0.1", 80, constant.WithContextPath("/nacos"))
+
+var _ naming_proxy.INamingProxy = &MockNamingProxy{}
 
 type MockNamingProxy struct {
 }
@@ -68,6 +71,10 @@ func (m *MockNamingProxy) Unsubscribe(serviceName, groupName, clusters string) e
 }
 
 func (m *MockNamingProxy) CloseClient() {}
+
+func (m *MockNamingProxy) GetNamespaces() ([]model.Namespace, error) {
+	return []model.Namespace{}, nil
+}
 
 func NewTestNamingClient() *NamingClient {
 	nc := nacos_client.NacosClient{}

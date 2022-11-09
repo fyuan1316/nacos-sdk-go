@@ -28,6 +28,24 @@ import (
 	"github.com/nacos-group/nacos-sdk-go/v2/vo"
 )
 
+// CreateComposedConfigClient use to create config client
+func CreateComposedConfigClient(properties map[string]interface{}) (iClient config_client.ComposedInterface, err error) {
+	param := getConfigParam(properties)
+	return NewComposedConfigClient(param)
+}
+func NewComposedConfigClient(param vo.NacosClientParam) (iClient config_client.ComposedInterface, err error) {
+	nacosClient, err := setConfig(param)
+	if err != nil {
+		return
+	}
+	config, err := config_client.NewComposedConfigClient(nacosClient)
+	if err != nil {
+		return
+	}
+	iClient = config
+	return
+}
+
 // CreateConfigClient use to create config client
 func CreateConfigClient(properties map[string]interface{}) (iClient config_client.IConfigClient, err error) {
 	param := getConfigParam(properties)

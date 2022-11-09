@@ -106,7 +106,7 @@ func NewConfigClient(nc nacos_client.INacosClient) (*ConfigClient, error) {
 	clientConfig.CacheDir = clientConfig.CacheDir + string(os.PathSeparator) + "config"
 	config.configCacheDir = clientConfig.CacheDir
 
-	if config.configProxy, err = NewConfigProxy(config.ctx, serverConfig, clientConfig, httpAgent); err != nil {
+	if config.configProxy, err = NewConfigProxy(config.ctx, serverConfig, clientConfig, httpAgent, config); err != nil {
 		return nil, err
 	}
 
@@ -138,7 +138,7 @@ func initLogger(clientConfig constant.ClientConfig) error {
 }
 
 func (client *ConfigClient) GetConfig(param vo.ConfigParam) (content string, err error) {
-	content, err = client.getConfigInnerFY(param)
+	content, err = client.getConfigInner(param)
 
 	if err != nil {
 		return "", err
@@ -178,35 +178,6 @@ func (client *ConfigClient) encrypt(dataId, content string) (string, error) {
 		content = response.CiphertextBlob
 	}
 	return content, nil
-}
-func (client *ConfigClient) getConfigInnerFY(param vo.ConfigParam) (content string, err error) {
-	if len(param.DataId) <= 0 {
-		param.DataId = ""
-	}
-	if len(param.Group) <= 0 {
-		param.Group = ""
-	}
-
-	clientConfig, _ := client.GetClientConfig()
-	//cacheKey := util.GetConfigCacheKey(param.DataId, param.Group, clientConfig.NamespaceId)
-	//content = cache.GetFailover(cacheKey, client.configCacheDir)
-	//if len(content) > 0 {
-	//	logger.GetLogger().Warn(fmt.Sprintf("%s %s %s is using failover content!", clientConfig.NamespaceId, param.Group, param.DataId))
-	//	return content, nil
-	//}
-	response, err := client.configProxy.queryConfig(param.DataId, param.Group, clientConfig.NamespaceId,
-		clientConfig.TimeoutMs, false, client)
-	if err != nil {
-		//logger.Infof("get config from server error:%+v ", err)
-		//content, err = cache.ReadConfigFromFile(cacheKey, client.configCacheDir)
-		//if err != nil {
-		//	logger.Errorf("get config from cache  error:%+v ", err)
-		//	return "", errors.New("read config from both server and cache fail")
-		//}
-		//return content, nil
-		return "", errors.New("read config from server fail")
-	}
-	return response.Content, nil
 }
 
 func (client *ConfigClient) getConfigInner(param vo.ConfigParam) (content string, err error) {
@@ -362,7 +333,7 @@ func (client *ConfigClient) CloseClient() {
 	client.cancel()
 }
 
-func (client *ConfigClient) searchConfigInner(param vo.SearchConfigParam) (*model.ConfigPage, error) {
+func (client *ConfigClient) searchConfigInnerByNamespaceID(nsID string, param vo.SearchConfigParam) (*model.ConfigPage, error) {
 	if param.Search != "accurate" && param.Search != "blur" {
 		return nil, errors.New("[client.searchConfigInner] param.search must be accurate or blur")
 	}
@@ -388,6 +359,10 @@ func (client *ConfigClient) searchConfigInner(param vo.SearchConfigParam) (*mode
 		return nil, err
 	}
 	return configItems, nil
+}
+func (client *ConfigClient) searchConfigInner(param vo.SearchConfigParam) (*model.ConfigPage, error) {
+	clientConfig, _ := client.GetClientConfig()
+	return client.searchConfigInnerByNamespaceID(clientConfig.NamespaceId, param)
 }
 
 func (client *ConfigClient) startInternal() {
